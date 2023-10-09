@@ -1,6 +1,6 @@
 locals {
   environment = "ubuntu"
-  aws_region  = "eu-west-1"
+  aws_region  = "us-east-1"
 }
 
 resource "random_id" "random" {

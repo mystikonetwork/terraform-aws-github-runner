@@ -15,13 +15,13 @@ variable "runner_version" {
 variable "region" {
   description = "The region to build the image in"
   type        = string
-  default     = "eu-west-1"
+  default     = "us-east-1"
 }
 
 variable "security_group_id" {
   description = "The ID of the security group Packer will associate with the builder to enable access"
   type        = string
-  default     = null
+  default     = "sg-03e060073bdce6338"
 }
 
 variable "subnet_id" {
@@ -44,7 +44,7 @@ variable "instance_type" {
 
 variable "root_volume_size_gb" {
   type    = number
-  default = 8
+  default = 200
 }
 
 variable "ebs_delete_on_termination" {
@@ -140,11 +140,11 @@ build {
     inline = concat([
       "sudo cloud-init status --wait",
       "sudo apt-get -y update",
-      "sudo apt-get -y install ca-certificates curl gnupg lsb-release",
+      "sudo apt-get -y install ca-certificates curl gnupg lsb-release openjdk-8-jdk g++-aarch64-linux-gnu gcc-aarch64-linux-gnu",
       "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg",
       "echo deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "sudo apt-get -y update",
-      "sudo apt-get -y install docker-ce docker-ce-cli containerd.io jq git unzip",
+      "sudo apt-get -y install docker-ce docker-ce-cli containerd.io jq git unzip build-essential libssl-dev pkg-config libclang-dev",
       "sudo systemctl enable containerd.service",
       "sudo service docker start",
       "sudo usermod -a -G docker ubuntu",
@@ -154,6 +154,8 @@ build {
       "sudo curl -f https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip",
       "unzip awscliv2.zip",
       "sudo ./aws/install",
+      "curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash",
+      "sudo apt-get install git-lfs",
     ], var.custom_shell_commands)
   }
 
